@@ -16,6 +16,12 @@ jobs:
       - name: Clone bufbuild/plugins
         run: git clone --depth 1 https://github.com/bufbuild/plugins.git
 
+      - name: Patch protocolbuffers Dockerfiles (clean Bazel sandbox between builds)
+        run: |
+          for f in plugins/plugins/protocolbuffers/*/v33.5/Dockerfile; do
+            sed -i '/\/\/plugins:/s/RUN bazelisk/RUN rm -rf .cache\/bazel\/*\/sandbox \&\& bazelisk/' "$f"
+          done
+
       - name: Build grpc-cpp
         run: docker build -t grpc-cpp -f plugins/plugins/grpc/cpp/v1.78.1/Dockerfile plugins/plugins/grpc/cpp/v1.78.1
 
