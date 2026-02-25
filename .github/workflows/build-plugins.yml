@@ -22,15 +22,6 @@ jobs:
             sed -i '/\/\/plugins:/s/RUN bazelisk/RUN rm -rf .cache\/bazel\/*\/sandbox \&\& bazelisk/' "$f"
           done
 
-      - name: Build grpc-cpp
-        run: docker build -t grpc-cpp -f plugins/plugins/grpc/cpp/v1.78.1/Dockerfile plugins/plugins/grpc/cpp/v1.78.1
-
-      - name: Build grpc-csharp
-        run: docker build -t grpc-csharp -f plugins/plugins/grpc/csharp/v1.78.1/Dockerfile plugins/plugins/grpc/csharp/v1.78.1
-
-      - name: Build grpc-python
-        run: docker build -t grpc-python -f plugins/plugins/grpc/python/v1.78.1/Dockerfile plugins/plugins/grpc/python/v1.78.1
-
       - name: Build protoc-cpp
         run: docker build -t protoc-cpp -f plugins/plugins/protocolbuffers/cpp/v33.5/Dockerfile plugins/plugins/protocolbuffers/cpp/v33.5
 
@@ -40,6 +31,15 @@ jobs:
       - name: Build protoc-python
         run: docker build -t protoc-python -f plugins/plugins/protocolbuffers/python/v33.5/Dockerfile plugins/plugins/protocolbuffers/python/v33.5
 
+      - name: Build grpc-cpp
+        run: docker build -t grpc-cpp -f plugins/plugins/grpc/cpp/v1.78.1/Dockerfile plugins/plugins/grpc/cpp/v1.78.1
+
+      - name: Build grpc-csharp
+        run: docker build -t grpc-csharp -f plugins/plugins/grpc/csharp/v1.78.1/Dockerfile plugins/plugins/grpc/csharp/v1.78.1
+
+      - name: Build grpc-python
+        run: docker build -t grpc-python -f plugins/plugins/grpc/python/v1.78.1/Dockerfile plugins/plugins/grpc/python/v1.78.1
+
       - name: Extract executables
         run: |
           extract() {
@@ -48,33 +48,48 @@ jobs:
             docker cp "$id:$path" "$output"
             docker rm "$id"
           }
-          extract grpc-cpp /grpc_cpp_plugin_binary grpc_cpp_plugin_binary
-          extract grpc-csharp /grpc_csharp_plugin_binary grpc_csharp_plugin_binary
-          extract grpc-python /grpc_python_plugin_binary grpc_python_plugin_binary
           extract protoc-cpp /protoc-gen-cpp protoc-gen-cpp
           extract protoc-csharp /protoc-gen-csharp protoc-gen-csharp
           extract protoc-python /protoc-gen-python protoc-gen-python
+          extract grpc-cpp /grpc_cpp_plugin_binary grpc_cpp_plugin_binary
+          extract grpc-csharp /grpc_csharp_plugin_binary grpc_csharp_plugin_binary
+          extract grpc-python /grpc_python_plugin_binary grpc_python_plugin_binary
+
+      - name: Collect buf.plugin.yaml files
+        run: |
+          cp plugins/plugins/protocolbuffers/cpp/v33.5/buf.plugin.yaml protoc-cpp.buf.plugin.yaml
+          cp plugins/plugins/protocolbuffers/csharp/v33.5/buf.plugin.yaml protoc-csharp.buf.plugin.yaml
+          cp plugins/plugins/protocolbuffers/python/v33.5/buf.plugin.yaml protoc-python.buf.plugin.yaml
+          cp plugins/plugins/grpc/cpp/v1.78.1/buf.plugin.yaml grpc-cpp.buf.plugin.yaml
+          cp plugins/plugins/grpc/csharp/v1.78.1/buf.plugin.yaml grpc-csharp.buf.plugin.yaml
+          cp plugins/plugins/grpc/python/v1.78.1/buf.plugin.yaml grpc-python.buf.plugin.yaml
 
       - name: Create plugins.txt
         run: |
           printf '%s\n' \
-            'plugins/grpc/cpp/v1.78.1/Dockerfile' \
-            'plugins/grpc/csharp/v1.78.1/Dockerfile' \
-            'plugins/grpc/python/v1.78.1/Dockerfile' \
             'plugins/protocolbuffers/cpp/v33.5/Dockerfile' \
             'plugins/protocolbuffers/csharp/v33.5/Dockerfile' \
             'plugins/protocolbuffers/python/v33.5/Dockerfile' \
+            'plugins/grpc/cpp/v1.78.1/Dockerfile' \
+            'plugins/grpc/csharp/v1.78.1/Dockerfile' \
+            'plugins/grpc/python/v1.78.1/Dockerfile' \
             > plugins.txt
 
       - name: Create tarball
         run: |
           tar -czf plugins.tar.gz \
-            grpc_cpp_plugin_binary \
-            grpc_csharp_plugin_binary \
-            grpc_python_plugin_binary \
             protoc-gen-cpp \
             protoc-gen-csharp \
             protoc-gen-python \
+            grpc_cpp_plugin_binary \
+            grpc_csharp_plugin_binary \
+            grpc_python_plugin_binary \
+            protoc-cpp.buf.plugin.yaml \
+            protoc-csharp.buf.plugin.yaml \
+            protoc-python.buf.plugin.yaml \
+            grpc-cpp.buf.plugin.yaml \
+            grpc-csharp.buf.plugin.yaml \
+            grpc-python.buf.plugin.yaml \
             plugins.txt
 
       - name: Create GitHub release
