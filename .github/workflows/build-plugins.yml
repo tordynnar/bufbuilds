@@ -19,7 +19,7 @@ jobs:
       - name: Patch protocolbuffers Dockerfiles (clean Bazel sandbox between builds)
         run: |
           for f in plugins/plugins/protocolbuffers/*/v33.5/Dockerfile; do
-            sed -i '/\/\/plugins:/s/RUN bazelisk/RUN rm -rf .cache\/bazel\/*\/sandbox \&\& bazelisk/' "$f"
+            sed -i '/\/\/plugins:/s/RUN bazelisk/RUN rm -rf .cache\/bazel\/*\/*\/sandbox \&\& bazelisk/' "$f"
           done
 
       - name: Build protoc-cpp
