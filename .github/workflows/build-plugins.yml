@@ -18,27 +18,27 @@ jobs:
 
       - name: Patch protocolbuffers Dockerfiles (clean Bazel sandbox between builds)
         run: |
-          for f in plugins/plugins/protocolbuffers/*/v33.5/Dockerfile; do
+          for f in plugins/plugins/protocolbuffers/*/v33.4/Dockerfile; do
             sed -i '/\/\/plugins:/s/RUN bazelisk/RUN rm -rf .cache\/bazel\/*\/*\/sandbox \&\& bazelisk/' "$f"
           done
 
       - name: Build protoc-cpp
-        run: docker build -t protoc-cpp -f plugins/plugins/protocolbuffers/cpp/v33.5/Dockerfile plugins/plugins/protocolbuffers/cpp/v33.5
+        run: docker build -t protoc-cpp -f plugins/plugins/protocolbuffers/cpp/v33.4/Dockerfile plugins/plugins/protocolbuffers/cpp/v33.4
 
       - name: Build protoc-csharp
-        run: docker build -t protoc-csharp -f plugins/plugins/protocolbuffers/csharp/v33.5/Dockerfile plugins/plugins/protocolbuffers/csharp/v33.5
+        run: docker build -t protoc-csharp -f plugins/plugins/protocolbuffers/csharp/v33.4/Dockerfile plugins/plugins/protocolbuffers/csharp/v33.4
 
       - name: Build protoc-python
-        run: docker build -t protoc-python -f plugins/plugins/protocolbuffers/python/v33.5/Dockerfile plugins/plugins/protocolbuffers/python/v33.5
+        run: docker build -t protoc-python -f plugins/plugins/protocolbuffers/python/v33.4/Dockerfile plugins/plugins/protocolbuffers/python/v33.4
 
       - name: Build grpc-cpp
-        run: docker build -t grpc-cpp -f plugins/plugins/grpc/cpp/v1.78.1/Dockerfile plugins/plugins/grpc/cpp/v1.78.1
+        run: docker build -t grpc-cpp -f plugins/plugins/grpc/cpp/v1.76.0/Dockerfile plugins/plugins/grpc/cpp/v1.76.0
 
       - name: Build grpc-csharp
-        run: docker build -t grpc-csharp -f plugins/plugins/grpc/csharp/v1.78.1/Dockerfile plugins/plugins/grpc/csharp/v1.78.1
+        run: docker build -t grpc-csharp -f plugins/plugins/grpc/csharp/v1.76.0/Dockerfile plugins/plugins/grpc/csharp/v1.76.0
 
       - name: Build grpc-python
-        run: docker build -t grpc-python -f plugins/plugins/grpc/python/v1.78.1/Dockerfile plugins/plugins/grpc/python/v1.78.1
+        run: docker build -t grpc-python -f plugins/plugins/grpc/python/v1.76.0/Dockerfile plugins/plugins/grpc/python/v1.76.0
 
       - name: Extract executables
         run: |
@@ -57,22 +57,22 @@ jobs:
 
       - name: Collect buf.plugin.yaml files
         run: |
-          cp plugins/plugins/protocolbuffers/cpp/v33.5/buf.plugin.yaml protoc-cpp.buf.plugin.yaml
-          cp plugins/plugins/protocolbuffers/csharp/v33.5/buf.plugin.yaml protoc-csharp.buf.plugin.yaml
-          cp plugins/plugins/protocolbuffers/python/v33.5/buf.plugin.yaml protoc-python.buf.plugin.yaml
-          cp plugins/plugins/grpc/cpp/v1.78.1/buf.plugin.yaml grpc-cpp.buf.plugin.yaml
-          cp plugins/plugins/grpc/csharp/v1.78.1/buf.plugin.yaml grpc-csharp.buf.plugin.yaml
-          cp plugins/plugins/grpc/python/v1.78.1/buf.plugin.yaml grpc-python.buf.plugin.yaml
+          cp plugins/plugins/protocolbuffers/cpp/v33.4/buf.plugin.yaml protoc-cpp.buf.plugin.yaml
+          cp plugins/plugins/protocolbuffers/csharp/v33.4/buf.plugin.yaml protoc-csharp.buf.plugin.yaml
+          cp plugins/plugins/protocolbuffers/python/v33.4/buf.plugin.yaml protoc-python.buf.plugin.yaml
+          cp plugins/plugins/grpc/cpp/v1.76.0/buf.plugin.yaml grpc-cpp.buf.plugin.yaml
+          cp plugins/plugins/grpc/csharp/v1.76.0/buf.plugin.yaml grpc-csharp.buf.plugin.yaml
+          cp plugins/plugins/grpc/python/v1.76.0/buf.plugin.yaml grpc-python.buf.plugin.yaml
 
       - name: Create plugins.txt
         run: |
           printf '%s\n' \
-            'plugins/protocolbuffers/cpp/v33.5/Dockerfile' \
-            'plugins/protocolbuffers/csharp/v33.5/Dockerfile' \
-            'plugins/protocolbuffers/python/v33.5/Dockerfile' \
-            'plugins/grpc/cpp/v1.78.1/Dockerfile' \
-            'plugins/grpc/csharp/v1.78.1/Dockerfile' \
-            'plugins/grpc/python/v1.78.1/Dockerfile' \
+            'plugins/protocolbuffers/cpp/v33.4/Dockerfile' \
+            'plugins/protocolbuffers/csharp/v33.4/Dockerfile' \
+            'plugins/protocolbuffers/python/v33.4/Dockerfile' \
+            'plugins/grpc/cpp/v1.76.0/Dockerfile' \
+            'plugins/grpc/csharp/v1.76.0/Dockerfile' \
+            'plugins/grpc/python/v1.76.0/Dockerfile' \
             > plugins.txt
 
       - name: Create tarball
